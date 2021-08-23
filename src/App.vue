@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState } from "vuex";
 
 export default {
   name: "App",
@@ -16,11 +16,11 @@ export default {
   },
 
   created() {},
-  computed() {
-     mapState("setting", ["layout", "theme", "weekMode", "lang"]) 
+  computed: {
+    ...mapState("setting", ["layout", "theme", "weekMode", "lang"])
   },
   mounted() {},
-  watch: {}, 
+  watch: {},
   methods: {
     popupContainer() {
       return document.getElementById("popContainer");

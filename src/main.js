@@ -10,6 +10,7 @@ import store from './store'
 import Vuex from 'vuex'
 import VueHighlightJS from 'vue-highlightjs'
 import 'highlight.js/styles/github.css' //样式文件
+import {initI18n} from '@/utils/i18n'
 import signalR from './utils/signalR'
 
 const i18n = initI18n('CN', 'US')

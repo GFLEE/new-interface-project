@@ -1,23 +1,24 @@
 <template>
   <div style="background-color: #ececec; padding:20px; height :600px">
-    
     <a-row :gutter="20">
       <a-col :span="12">
-         <a-card title="SignalR 测试" :bordered="true" style="height :550px" >
-          <a-textarea placeholder="Basic usage" v-model="sigForm.key" :rows="20">
+        <a-card title="SignalR 测试" :bordered="true" style="height :550px">
+          <a-textarea
+            placeholder="Basic usage"
+            v-model="sigForm.key"
+            :rows="20"
+          >
           </a-textarea>
         </a-card>
       </a-col>
       <a-col :span="12">
-       <a-card title="SignalR 测试" :bordered="false"  style="height :550px" >
+        <a-card title="SignalR 测试" :bordered="false" style="height :550px">
           <pre v-highlightjs>
           <code class="json" spellcheck="false" >{{msg}} </code>
           </pre>
-      </a-card> 
+        </a-card>
       </a-col>
     </a-row>
-
- 
   </div>
 </template>
 
@@ -28,7 +29,7 @@ import bus from "@/utils/bus";
 export default {
   data() {
     return {
-       msg: "",
+      msg: "",
       sigForm: {
         key: ""
       },
@@ -46,14 +47,17 @@ export default {
   },
   mounted() {
     console.log("完成挂载");
+    var a = { a: "a", b: "b" };
+    var b = { ...a }; //{"a":"a","b":"b"}
+    //console.log(b);
     connectServer("http://localhost:5000/InterfaceServiceHub", "virtual data");
     bus.$on("handleRefreshData", data => {
       this.sigForm.key = data;
-       this.msg = data;
-       console.log(data);
+      this.msg = data;
+      console.log(data);
     });
   },
- 
+
   //监听变化的值
   watch: {
     map: function() {
