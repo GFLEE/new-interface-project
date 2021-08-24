@@ -8,7 +8,8 @@ plugins.push('transform-object-rest-spread')
 
 module.exports = {
   presets: [
-    '@vue/cli-plugin-babel/preset'
+    //'@vue/cli-plugin-babel/preset',
+    //'es2015'
   ],
   plugins, 
 

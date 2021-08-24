@@ -13,9 +13,9 @@
       </a-col>
       <a-col :span="12">
         <a-card title="SignalR 测试" :bordered="false" style="height :550px">
-          <pre v-highlightjs>
-          <code class="json" spellcheck="false" >{{msg}} </code>
-          </pre>
+          <div id="codeView" v-highlight>
+            <pre><code class="json"  v-html="code"></code></pre>
+          </div> 
         </a-card>
       </a-col>
     </a-row>
@@ -29,7 +29,7 @@ import bus from "@/utils/bus";
 export default {
   data() {
     return {
-      msg: "",
+      code: "",
       sigForm: {
         key: ""
       },
@@ -46,14 +46,11 @@ export default {
     }
   },
   mounted() {
-    console.log("完成挂载");
-    var a = { a: "a", b: "b" };
-    var b = { ...a }; //{"a":"a","b":"b"}
-    //console.log(b);
+    console.log("完成挂载,开始连接...");
     connectServer("http://localhost:5000/InterfaceServiceHub", "virtual data");
     bus.$on("handleRefreshData", data => {
       this.sigForm.key = data;
-      this.msg = data;
+      this.code = data;
       console.log(data);
     });
   },
