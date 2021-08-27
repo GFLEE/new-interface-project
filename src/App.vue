@@ -3,15 +3,15 @@
     <router-view />
   </a-config-provider>
 </template>
-
+ 
 <script>
 import { mapState, mapMutations } from "vuex";
 import { enquireScreen } from "@/utils/util";
-import {getI18nKey} from '@/utils/routerUtil'
+import { getI18nKey } from "@/utils/routerUtil";
 
 export default {
   name: "App",
-  data() {
+  data() { 
     return {
       locale: {}
     };
@@ -41,15 +41,16 @@ export default {
     ...mapMutations("setting", ["setDevice"]),
     setHtmlTitle() {
       const route = this.$route;
+      console.log(route.path);
       const key =
         route.path === "/"
           ? "home.name"
           : getI18nKey(route.matched[route.matched.length - 1].path);
       document.title = process.env.VUE_APP_NAME + " | " + this.$t(key);
     },
-    popupContainer() { 
+    popupContainer() {
       return document.getElementById("popContainer");
-    }, 
+    },
     setLanguage(lang) {
       this.$i18n.locale = lang;
       switch (lang) {

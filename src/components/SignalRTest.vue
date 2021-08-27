@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { connectServer } from "@/utils/signalR";
+//import { connectServer } from "@/utils/signalR";
 import bus from "@/utils/bus";
 
 export default {
@@ -47,7 +47,7 @@ export default {
   },
   mounted() {
     console.log("完成挂载,开始连接...");
-    connectServer("http://localhost:5000/InterfaceServiceHub", "virtual data");
+    //connectServer("http://localhost:5000/InterfaceServiceHub", "virtual data");
     bus.$on("handleRefreshData", data => {
       this.sigForm.key = data;
       this.code = data;
