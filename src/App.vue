@@ -3,23 +3,27 @@
     <router-view />
   </a-config-provider>
 </template>
- 
+
 <script>
 import { mapState, mapMutations } from "vuex";
 import { enquireScreen } from "@/utils/util";
 import { getI18nKey } from "@/utils/routerUtil";
+import themeUtil from "@/utils/themeUtil";
 
 export default {
   name: "App",
-  data() { 
+  data() {
     return {
       locale: {}
     };
   },
   created() {
+    this.setHtmlTitle();
     enquireScreen(isMobile => this.setDevice(isMobile));
   },
-  mounted() {},
+  mounted() {
+    this.setWeekModeTheme(this.weekMode);
+  },
 
   computed: {
     //computed是不能传参数
@@ -35,6 +39,21 @@ export default {
     },
     $route() {
       this.setHtmlTitle();
+    },
+    "theme.mode": function(val) {
+      let closeMessage = this.$message.loading(
+        `您选择了主题模式 ${val}, 正在切换...`
+      );
+      themeUtil.changeThemeColor(this.theme.color, val).then(closeMessage);
+    },
+    "theme.color": function(val) {
+      let closeMessage = this.$message.loading(
+        `您选择了主题色 ${val}, 正在切换...`
+      );
+      themeUtil.changeThemeColor(val, this.theme.mode).then(closeMessage);
+    },
+    layout: function() {
+      window.dispatchEvent(new Event("resize"));
     }
   },
   methods: {

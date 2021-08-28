@@ -75,9 +75,9 @@
 
 <script>
 import CommonLayout from '@/layouts/CommonLayout'
-import {login, getRoutesConfig} from '@/services/user'
-import {setAuthorization} from '@/utils/request'
-import {loadRoutes} from '@/utils/routerUtil'
+// import {login, getRoutesConfig} from '@/services/user'
+// import {setAuthorization} from '@/utils/request'
+// import {loadRoutes} from '@/utils/routerUtil'
 import {mapMutations} from 'vuex'
 
 export default {
@@ -98,35 +98,36 @@ export default {
   methods: {
     ...mapMutations('account', ['setUser', 'setPermissions', 'setRoles']),
     onSubmit (e) {
-      e.preventDefault()
-      this.form.validateFields((err) => {
-        if (!err) {
-          this.logging = true
-          const name = this.form.getFieldValue('name')
-          const password = this.form.getFieldValue('password')
-          login(name, password).then(this.afterLogin)
-        }
-      })
+      e.preventDefault()  //原生事件
+      //this.form.validateFields((err) => {
+      //   if (!err) {
+      //     this.logging = true
+      //     const name = this.form.getFieldValue('name')
+      //     const password = this.form.getFieldValue('password')
+      //     login(name, password).then(this.afterLogin)
+      //   }
+      // })
     },
     afterLogin(res) {
-      this.logging = false
-      const loginRes = res.data
-      if (loginRes.code >= 0) {
-        const {user, permissions, roles} = loginRes.data
-        this.setUser(user)
-        this.setPermissions(permissions)
-        this.setRoles(roles)
-        setAuthorization({token: loginRes.data.token, expireAt: new Date(loginRes.data.expireAt)})
-        // 获取路由配置
-        getRoutesConfig().then(result => {
-          const routesConfig = result.data.data
-          loadRoutes(routesConfig)
-          this.$router.push('/dashboard/workplace')
-          this.$message.success(loginRes.message, 3)
-        })
-      } else {
-        this.error = loginRes.message
-      }
+      console.log(res)
+      // this.logging = false
+      // const loginRes = res.data
+      // if (loginRes.code >= 0) {
+      //   const {user, permissions, roles} = loginRes.data
+      //   this.setUser(user)
+      //   this.setPermissions(permissions)
+      //   this.setRoles(roles)
+      //   setAuthorization({token: loginRes.data.token, expireAt: new Date(loginRes.data.expireAt)})
+      //   // 获取路由配置
+      //   getRoutesConfig().then(result => {
+      //     const routesConfig = result.data.data
+      //     loadRoutes(routesConfig)
+      //     this.$router.push('/dashboard/workplace')
+      //     this.$message.success(loginRes.message, 3)
+      //   })
+      // } else {
+      //   this.error = loginRes.message
+      // }
     }
   }
 }

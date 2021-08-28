@@ -10,6 +10,8 @@ import signalR from "@/utils/signalR";
 import Plugins from "@/plugins";
 import Viser from "viser-vue";
 import bootstrap from "@/bootstrap";
+import './theme/index.less'
+import 'moment/locale/zh-cn'
 
 
 Vue.prototype.sendMsg = signalR.sendMsg;

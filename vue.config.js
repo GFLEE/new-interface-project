@@ -3,6 +3,8 @@ const webpack = require("webpack");
 
 const productionGzipExtensions = ["js", "css"];
 const isProd = process.env.NODE_ENV === "production";
+const { getThemeColors, modifyVars } = require("./src/utils/themeUtil");
+const { resolveCss } = require("./src/utils/theme-color-replacer-extend");
 
 /**
  * @type {import('@vue/cli-service').ProjectOptions}
@@ -31,14 +33,14 @@ module.exports = {
     config.performance = {
       hints: false
     };
-    // config.plugins.push(
-    //   new ThemeColorReplacer({
-    //     fileName: "css/theme-colors-[contenthash:8].css",
-    //     matchColors: getThemeColors(),
-    //     injectCss: true,
-    //     resolveCss
-    //   })
-    // );
+    config.plugins.push(
+      new ThemeColorReplacer({
+        fileName: "css/theme-colors-[contenthash:8].css",
+        matchColors: getThemeColors(),
+        injectCss: true,
+        resolveCss
+      })
+    );
     // Ignore all locale files of moment.js
     config.plugins.push(new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/));
     // 生产环境下将资源压缩成gzip格式
