@@ -1,21 +1,20 @@
-import Vue from "vue";
-import App from "./App";
-import { initVueRouter } from "./router";
-import Antd from "ant-design-vue";
-import "ant-design-vue/dist/antd.css"; // 引入的样式文件
-import store from "./store";
-import Vuex from "vuex";
-import { initI18n } from "@/utils/i18n";
-import signalR from "@/utils/signalR";
-import Plugins from "@/plugins";
-import Viser from "viser-vue";
-import bootstrap from "@/bootstrap";
+import Vue from 'vue'
+import App from './App.vue'
+import {initRouter} from './router'
 import './theme/index.less'
+import Antd from 'ant-design-vue'
+import Viser from 'viser-vue'
+import '@/mock'
+import store from './store'
+import 'animate.css/source/animate.css'
+import Plugins from '@/plugins'
+import {initI18n} from '@/utils/i18n'
+import bootstrap from '@/bootstrap'
 import 'moment/locale/zh-cn'
 
 
-Vue.prototype.sendMsg = signalR.sendMsg;
-Vue.use(Antd);
+Vue.prototype.sendMsg = signalR.sendMsg; 
+Vue.use(Antd); 
 Vue.use(Vuex);
 Vue.use(Plugins);
 Vue.use(Viser);

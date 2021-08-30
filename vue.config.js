@@ -1,6 +1,6 @@
 let path = require("path");
 const webpack = require("webpack");
-
+const ThemeColorReplacer = require("webpack-theme-color-replacer");
 const productionGzipExtensions = ["js", "css"];
 const isProd = process.env.NODE_ENV === "production";
 const { getThemeColors, modifyVars } = require("./src/utils/themeUtil");
@@ -55,5 +55,19 @@ module.exports = {
         })
       );
     }
-  }
+  },
+  css: {
+    loaderOptions: {
+      less: {
+        lessOptions: {
+          modifyVars: modifyVars(),  //读取变量值
+          javascriptEnabled: true
+        }
+      }
+    }
+  },
+  publicPath: process.env.VUE_APP_PUBLIC_PATH,
+  outputDir: "dist",
+  assetsDir: "static",
+  productionSourceMap: false
 };
