@@ -4,6 +4,7 @@ import {initRouter} from './router'
 import './theme/index.less'
 import Antd from 'ant-design-vue'
 import Viser from 'viser-vue'
+import less from 'less'
 import '@/mock'
 import store from './store'
 import 'animate.css/source/animate.css'
@@ -18,10 +19,11 @@ Vue.use(Antd);
 Vue.use(Vuex);
 Vue.use(Plugins);
 Vue.use(Viser);
+Vue.use(less)
 
 Vue.config.productionTip = false;
 Vue.config.devtools = false;
-
+ 
 const i18n = initI18n("CN", "US"); 
 
 // const is_async =store.state.setting.asyncRoutes;
