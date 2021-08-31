@@ -1,10 +1,9 @@
 import Vue from 'vue'
 import App from './App.vue'
-import {initRouter} from './router'
+import {initVueRouter} from './router'
 import './theme/index.less'
 import Antd from 'ant-design-vue'
 import Viser from 'viser-vue'
-import less from 'less'
 import '@/mock'
 import store from './store'
 import 'animate.css/source/animate.css'
@@ -14,12 +13,9 @@ import bootstrap from '@/bootstrap'
 import 'moment/locale/zh-cn'
 
 
-Vue.prototype.sendMsg = signalR.sendMsg; 
 Vue.use(Antd); 
-Vue.use(Vuex);
 Vue.use(Plugins);
 Vue.use(Viser);
-Vue.use(less)
 
 Vue.config.productionTip = false;
 Vue.config.devtools = false;

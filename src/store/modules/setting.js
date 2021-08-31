@@ -1,7 +1,7 @@
 import config from '@/config'
-import {ADMIN} from '@/config/default'
+import {MAIN_THEME_CONF} from '@/config/default'
 import {formatFullPath} from '@/utils/i18n'
-// import {filterMenu} from '@/utils/authority-utils'
+import {filterMenu} from '@/utils/authority-utils'
 import {getLocalSetting} from '@/utils/themeUtil'
 import deepClone from 'lodash.clonedeep'
 
@@ -13,8 +13,8 @@ export default {
   namespaced: true,
   state: {
     isMobile: false,
-    animates: ADMIN.animates,
-    palettes: ADMIN.palettes,
+    animates: MAIN_THEME_CONF.animates,
+    palettes: MAIN_THEME_CONF.palettes,
     pageMinHeight: 0,
     menuData: [],
     activatedFirst: undefined,
@@ -24,10 +24,10 @@ export default {
   },
   getters: {
     menuData(state, getters, rootState) {
-      // if (state.filterMenu) {
-      //   const {permissions, roles} = rootState.account
-      //   return filterMenu(deepClone(state.menuData), permissions, roles)
-      // }
+      if (state.filterMenu) {
+        const {permissions, roles} = rootState.account
+        return filterMenu(deepClone(state.menuData), permissions, roles)
+      }
       return state.menuData
     },
     firstMenu(state, getters) {

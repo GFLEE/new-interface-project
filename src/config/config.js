@@ -8,7 +8,7 @@ module.exports = {
   animate: {
     name: "lightSpeed",
     direction: "left"
-  },
-  title: "Core.UI",
-  is4: false
+  }
+  //title: "Core.UI",
+  //is4: false
 };
