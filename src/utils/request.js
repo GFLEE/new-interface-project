@@ -1,87 +1,173 @@
-import axios from 'axios'
-// import Vue from 'vue'
+import axios from "axios";
+import Cookie from "js-cookie";
 
-axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
-axios.defaults.headers['Cache-Control'] = 'no-cache'
-axios.defaults.headers['Pragma'] = 'no-cache'
+// 跨域认证信息 header 名
+const xsrfHeaderName = "Authorization";
 
-const requestAxios = axios.create({
-    baseURL: '', // url = base url + request url
-    timeout: 20000 // 请求延时
-})
+axios.defaults.timeout = 5000;
+axios.defaults.withCredentials = true;
+axios.defaults.xsrfHeaderName = xsrfHeaderName;
+axios.defaults.xsrfCookieName = xsrfHeaderName;
 
-// 请求拦截
-requestAxios.interceptors.request.use(
-    config => {
-        return config
-    },
-    err => {
-        return Promise.reject(err)
+// 认证类型
+const AUTH_TYPE = {
+  BEARER: "Bearer",
+  BASIC: "basic",
+  AUTH1: "auth1",
+  AUTH2: "auth2"
+};
+
+// http method
+const METHOD = {
+  GET: "get",
+  POST: "post"
+};
+
+/**
+ * axios请求
+ * @param url 请求地址
+ * @param method {METHOD} http method
+ * @param params 请求参数
+ * @returns {Promise<AxiosResponse<T>>}
+ */
+async function request(url, method, params, config) {
+  console.log(params);
+  switch (method) {
+    case METHOD.GET:
+      return axios.get(url, { params, ...config });
+    case METHOD.POST:
+      return axios.post(url, params, config);
+    default:
+      return axios.get(url, { params, ...config });
+  }
+}
+
+/**
+ * 设置认证信息
+ * @param auth {Object}
+ * @param authType {AUTH_TYPE} 认证类型，默认：{AUTH_TYPE.BEARER}
+ */
+function setAuthorization(auth, authType = AUTH_TYPE.BEARER) {
+  switch (authType) {
+    case AUTH_TYPE.BEARER:
+      Cookie.set(xsrfHeaderName, "Bearer " + auth.token, {
+        expires: auth.expireAt
+      });
+      break;
+    case AUTH_TYPE.BASIC:
+    case AUTH_TYPE.AUTH1:
+    case AUTH_TYPE.AUTH2:
+    default:
+      break;
+  }
+}
+
+/**
+ * 移出认证信息
+ * @param authType {AUTH_TYPE} 认证类型
+ */
+function removeAuthorization(authType = AUTH_TYPE.BEARER) {
+  switch (authType) {
+    case AUTH_TYPE.BEARER:
+      Cookie.remove(xsrfHeaderName);
+      break;
+    case AUTH_TYPE.BASIC:
+    case AUTH_TYPE.AUTH1:
+    case AUTH_TYPE.AUTH2:
+    default:
+      break;
+  }
+}
+
+/**
+ * 检查认证信息
+ * @param authType
+ * @returns {boolean}
+ */
+function checkAuthorization(authType = AUTH_TYPE.BEARER) {
+  switch (authType) {
+    case AUTH_TYPE.BEARER:
+      if (Cookie.get(xsrfHeaderName)) {
+        return true;
+      }
+      break;
+    case AUTH_TYPE.BASIC:
+    case AUTH_TYPE.AUTH1:
+    case AUTH_TYPE.AUTH2:
+    default:
+      break;
+  }
+  return false;
+}
+
+/**
+ * 加载 axios 拦截器
+ * @param interceptors
+ * @param options
+ */
+function loadInterceptors(interceptors, options) {
+  const { request, response } = interceptors;
+  // 加载请求拦截器
+  request.forEach(item => {
+    let { onFulfilled, onRejected } = item;
+    if (!onFulfilled || typeof onFulfilled !== "function") {
+      onFulfilled = config => config;
     }
-)
-
-// 响应拦截
-requestAxios.interceptors.response.use(
-    response => {
-
-         const { config, data } = response
-         data.success = data.code === 200
-        var no_errmsg 
-        var msgDuration 
-        if(config.api!=null)
-        {
-            no_errmsg  = config.api.noErrorMsg 
-            msgDuration  = config.api.msgDuration 
-        }
-        if (!data.success 
-            && !no_errmsg 
-            && data.msg) {
-          const duration = msgDuration >= 0 ? msgDuration : 3000
-          Vue.prototype.$message.error({
-            message: data.msg,
-            duration: duration
-          })
-        }
-                
-        return data
-    },
-    async error => {
-        const res = { success: false, code: 0, msg: '' }
-
-        if (error!=null&&err.response) {
-          if (error.config._request) {
-            return res
-          }
-    
-          const { config, data, status } = error.response
-          if (_.isNumber(status)) {
-            res.code = status
-          }
-          if (_.isPlainObject(data)) {
-            _.merge(res, data)
-          } else if (_.isString(data)) {
-            res.msg = data || error.response.statusText
-          } 
-          var no_errmsg 
-          var msgDuration 
-          if(config.api!=null)
-          {
-              no_errmsg  = config.api.noErrorMsg 
-              msgDuration  = config.api.msgDuration 
-          }
-          // 错误消息
-          if (!no_errmsg && res.msg) {
-            const duration = msgDuration >= 0 ? msgDuration : 3000
-            Vue.prototype.$message.error({
-              message: res.msg,
-              duration: duration
-            })
-          }
-        }
-        return res
+    if (!onRejected || typeof onRejected !== "function") {
+      onRejected = error => Promise.reject(error);
     }
-)
+    axios.interceptors.request.use(
+      config => onFulfilled(config, options),
+      error => onRejected(error, options)
+    );
+  });
+  // 加载响应拦截器
+  response.forEach(item => {
+    console.log("响应拦截:" + item);
+    let { onFulfilled, onRejected } = item;
+    if (!onFulfilled || typeof onFulfilled !== "function") {
+      onFulfilled = response => response;
+    }
+    if (!onRejected || typeof onRejected !== "function") {
+      onRejected = error => Promise.reject(error);
+    }
+    axios.interceptors.response.use(
+      response => onFulfilled(response, options),
+      error => onRejected(error, options)
+    );
+  });
+}
 
-export default requestAxios
+/**
+ * 解析 url 中的参数
+ * @param url
+ * @returns {Object}
+ */
+function parseUrlParams(url) {
+  const params = {};
+  if (!url || url === "" || typeof url !== "string") {
+    return params;
+  }
+  const paramsStr = url.split("?")[1];
+  if (!paramsStr) {
+    return params;
+  }
+  const paramsArr = paramsStr.replace(/&|=/g, " ").split(" ");
+  for (let i = 0; i < paramsArr.length / 2; i++) {
+    const value = paramsArr[i * 2 + 1];
+    params[paramsArr[i * 2]] =
+      value === "true" ? true : value === "false" ? false : value;
+  }
+  return params;
+}
 
-
+export {
+  METHOD,
+  AUTH_TYPE,
+  request,
+  setAuthorization,
+  removeAuthorization,
+  checkAuthorization,
+  loadInterceptors,
+  parseUrlParams
+};

@@ -1,5 +1,8 @@
+// import routerMap from "@/router/async/router.map";
+import { mergeI18nFromRoutes } from "@/utils/i18n";
+// import Router from "vue-router";
 // import deepMerge from 'deepmerge'
-// import {mergeI18nFromRoutes} from '@/utils/i18n'
+// import basicOptions from "@/router/async/config.async";
 
 //-------------应用配置---------
 let appOptions = {
@@ -44,11 +47,28 @@ function formatRoutes(routes) {
 /**
  * 加载路由，由bootstrap调用
  */
-function loadRoutes() {
+function loadRoutes(routesConfig) {
+  const { router, store, i18n } = appOptions;
+  // 如果 routesConfig 有值，则更新到本地，否则从本地获取
+  if (routesConfig) {
+    store.commit("account/setRoutesConfig", routesConfig);
+  } else {
+    routesConfig = store.getters["account/routesConfig"];
+  }
+  const asyncRoutes = store.state.setting.asyncRoutes;
 
-
-
-
+  //todo: 加载异步路由配置
+  if (asyncRoutes) {
+    console("加载异步路由配置");
+  }
+  // 提取路由国际化数据
+  mergeI18nFromRoutes(i18n, router.options.routes);
+  // 初始化后台菜单数据
+  const rootRoute = router.options.routes.find(item => item.path === "/");
+  const menuRoutes = rootRoute && rootRoute.children;
+  if (menuRoutes) {
+    store.commit("setting/setMenuData", menuRoutes);
+  }
 }
 
 export { setAppOptions, getI18nKey, formatRoutes, loadRoutes };
