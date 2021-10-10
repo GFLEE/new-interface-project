@@ -32,7 +32,7 @@ const options = {
           meta: {
             icon: 'dashboard'
           },
-          component: BlankView,
+          component: BlankView, 
           children: [
             {
               path: 'workplace',
@@ -41,8 +41,21 @@ const options = {
                 page: {
                   closable: false
                 }
-              }
+              },
               //component: () => import('@/pages/dashboard/workplace'),
+              component: () => import('../components/Dashboard'),
+              children:[
+                {
+                  path: "SignalRTest",
+                  name: "SignalRTest",
+                  component: () => import('../components/SignalRTest'),
+                },
+                {
+                  path: "LogTab",
+                  name: "LogTab",
+                  component: () => import('../components/LogTab'),
+                }
+              ]
             }
           ]
         },

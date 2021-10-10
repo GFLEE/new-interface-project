@@ -53,7 +53,7 @@ const resp403 = {
 
 const reqCommon = {
   /**
-   * 发送请求之前做些什么
+   * 发送请求前的操作 
    * @param config axios config
    * @param options 应用配置 包含: {router, i18n, store, message}
    * @returns {*}
@@ -67,7 +67,7 @@ const reqCommon = {
     return config
   },
   /**
-   * 请求出错时做点什么
+   * 请求出错Handle
    * @param error 错误对象
    * @param options 应用配置 包含: {router, i18n, store, message}
    * @returns {Promise<never>}

@@ -1,21 +1,53 @@
 <template>
-  <div style="background-color: #ececec; padding:20px; height :600px">
+  <div style="background-color: #ececec; padding:20px; height :auto">
     <a-row :gutter="20">
       <a-col :span="12">
-        <a-card title="SignalR 测试" :bordered="true" style="height :550px">
-          <a-textarea
-            placeholder="Basic usage"
-            v-model="sigForm.key"
-            :rows="20"
-          >
-          </a-textarea>
+        <a-card title='CK01' :bordered="false" style="height :auto">
+          <div id="codeView" v-highlight>
+            <pre><code class="json"  v-html="code"></code></pre>
+          </div>
         </a-card>
       </a-col>
       <a-col :span="12">
-        <a-card title="SignalR 测试" :bordered="false" style="height :550px">
+        <a-card title="CK02" :bordered="false" style="height :auto">
           <div id="codeView" v-highlight>
-            <pre><code class="json"  v-html="code"></code></pre>
-          </div> 
+            <pre><code class="json"  v-html="code2"></code></pre>
+          </div>
+        </a-card>
+      </a-col>
+      <a-col :span="12">
+        <a-card title="CK03" :bordered="false" style="height :auto">
+          <div id="codeView" v-highlight>
+            <pre><code class="json"  v-html="code3"></code></pre>
+          </div>
+        </a-card>
+      </a-col>
+      <a-col :span="12">
+        <a-card title="CK04" :bordered="false" style="height :auto">
+          <div id="codeView" v-highlight>
+            <pre><code class="json"  v-html="code4"></code></pre>
+          </div>
+        </a-card>
+      </a-col>
+      <a-col :span="12">
+        <a-card title="DB05" :bordered="false" style="height :auto">
+          <div id="codeView" v-highlight>
+            <pre><code class="json"  v-html="code5"></code></pre>
+          </div>
+        </a-card>
+      </a-col>
+      <a-col :span="12">
+        <a-card title="01RG" :bordered="false" style="height :auto">
+          <div id="codeView" v-highlight>
+            <pre><code class="json"  v-html="RG01_code"></code></pre>
+          </div>
+        </a-card>
+      </a-col>
+      <a-col :span="12">
+        <a-card title="02RG" :bordered="false" style="height :auto">
+          <div id="codeView" v-highlight>
+            <pre><code class="json"  v-html="RG02_code"></code></pre>
+          </div>
         </a-card>
       </a-col>
     </a-row>
@@ -23,16 +55,19 @@
 </template>
 
 <script>
-//import { connectServer } from "@/utils/signalR";
+import { connectServer } from "@/utils/signalR";
 import bus from "@/utils/bus";
 
 export default {
   data() {
     return {
       code: "",
-      sigForm: {
-        key: ""
-      },
+      code2: "",
+      code3: "",
+      code4: "",
+      code5: "",
+      RG01_code: "",
+      RG02_code: "",
       layout: {
         labelCol: { span: 4 },
         wrapperCol: { span: 14 }
@@ -46,12 +81,35 @@ export default {
     }
   },
   mounted() {
-    console.log("完成挂载,开始连接...");
-    //connectServer("http://localhost:5000/InterfaceServiceHub", "virtual data");
-    bus.$on("handleRefreshData", data => {
-      this.sigForm.key = data;
+    const v_url = "http://172.29.162.145:5000/InterfaceServiceHub";
+    //const v_url = "http://localhost:5000/InterfaceServiceHub"
+    console.log("完成挂载,开始连接..." + v_url);
+    connectServer(v_url, "virtual data");
+
+    bus.$on("ck01Data", data => {
       this.code = data;
-      console.log(data);
+    });
+
+    bus.$on("ck02Data", data => {
+      this.code2 = data;
+    });
+
+    bus.$on("ck03Data", data => {
+      this.code3 = data;
+    });
+
+    bus.$on("ck04Data", data => {
+      this.code4 = data;
+    });
+
+    bus.$on("db05Data", data => {
+      this.code5 = data;
+    });
+    bus.$on("rg01Data", data => {
+      this.RG01_code = data;
+    });
+    bus.$on("rg02Data", data => {
+      this.RG02_code = data;
     });
   },
 
@@ -59,8 +117,6 @@ export default {
   watch: {
     map: function() {
       console.log("3333" + this.map);
-      //return this.map
-      // console.log('444444'+this.map);
 
       //var vector = new ol.layer.Vector({
       //  source: this.source

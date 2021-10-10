@@ -72,3 +72,4 @@ function loadRoutes(routesConfig) {
 }
 
 export { setAppOptions, getI18nKey, formatRoutes, loadRoutes };
+ 

@@ -125,7 +125,8 @@ export default {
       this.logging = false;
       const loginRes = res.data;
       if (loginRes.code >= 0) {
-        console.log("登录成功！" + res);
+        console.log("登录成功");
+        console.log(loginRes);
         // const {user, permissions, roles} = loginRes.data
         // this.setUser(user);
         // this.setPermissions(permissions);
@@ -135,8 +136,8 @@ export default {
         // getRoutesConfig().then(result => {
         //   const routesConfig = result.data.data
         //   loadRoutes(routesConfig)
-        //   this.$router.push('/dashboard/workplace')
-        //   this.$message.success(loginRes.message, 3)
+          this.$router.push('/dashboard/workplace')
+          this.$message.success(loginRes.message, 3)
         // })
       } else {
         this.error = loginRes.message;
