@@ -1,57 +1,59 @@
 <template>
-  <div style="background-color: #ececec; padding:20px; height :auto">
-    <a-row :gutter="20">
-      <a-col :span="12">
-        <a-card title='CK01' :bordered="false" style="height :auto">
-          <div id="codeView" v-highlight>
-            <pre><code class="json"  v-html="code"></code></pre>
-          </div>
-        </a-card>
-      </a-col>
-      <a-col :span="12">
-        <a-card title="CK02" :bordered="false" style="height :auto">
-          <div id="codeView" v-highlight>
-            <pre><code class="json"  v-html="code2"></code></pre>
-          </div>
-        </a-card>
-      </a-col>
-      <a-col :span="12">
-        <a-card title="CK03" :bordered="false" style="height :auto">
-          <div id="codeView" v-highlight>
-            <pre><code class="json"  v-html="code3"></code></pre>
-          </div>
-        </a-card>
-      </a-col>
-      <a-col :span="12">
-        <a-card title="CK04" :bordered="false" style="height :auto">
-          <div id="codeView" v-highlight>
-            <pre><code class="json"  v-html="code4"></code></pre>
-          </div>
-        </a-card>
-      </a-col>
-      <a-col :span="12">
-        <a-card title="DB05" :bordered="false" style="height :auto">
-          <div id="codeView" v-highlight>
-            <pre><code class="json"  v-html="code5"></code></pre>
-          </div>
-        </a-card>
-      </a-col>
-      <a-col :span="12">
-        <a-card title="01RG" :bordered="false" style="height :auto">
-          <div id="codeView" v-highlight>
-            <pre><code class="json"  v-html="RG01_code"></code></pre>
-          </div>
-        </a-card>
-      </a-col>
-      <a-col :span="12">
-        <a-card title="02RG" :bordered="false" style="height :auto">
-          <div id="codeView" v-highlight>
-            <pre><code class="json"  v-html="RG02_code"></code></pre>
-          </div>
-        </a-card>
-      </a-col>
-    </a-row>
-  </div>
+  <a-spin :spinning="spinning" tip="连接中...">
+    <div style="background-color: #ececec; padding:20px; height :auto">
+      <a-row :gutter="20">
+        <a-col :span="12">
+          <a-card title="CK01" :bordered="false" style="height :auto">
+            <div id="codeView" v-highlight>
+              <pre><code class="json"  v-html="code"></code></pre>
+            </div>
+          </a-card>
+        </a-col>
+        <a-col :span="12">
+          <a-card title="CK02" :bordered="false" style="height :auto">
+            <div id="codeView" v-highlight>
+              <pre><code class="json"  v-html="code2"></code></pre>
+            </div>
+          </a-card>
+        </a-col>
+        <a-col :span="12">
+          <a-card title="CK03" :bordered="false" style="height :auto">
+            <div id="codeView" v-highlight>
+              <pre><code class="json"  v-html="code3"></code></pre>
+            </div>
+          </a-card>
+        </a-col>
+        <a-col :span="12">
+          <a-card title="CK04" :bordered="false" style="height :auto">
+            <div id="codeView" v-highlight>
+              <pre><code class="json"  v-html="code4"></code></pre>
+            </div>
+          </a-card>
+        </a-col>
+        <a-col :span="12">
+          <a-card title="DB05" :bordered="false" style="height :auto">
+            <div id="codeView" v-highlight>
+              <pre><code class="json"  v-html="code5"></code></pre>
+            </div>
+          </a-card>
+        </a-col>
+        <a-col :span="12">
+          <a-card title="01RG" :bordered="false" style="height :auto">
+            <div id="codeView" v-highlight>
+              <pre><code class="json"  v-html="RG01_code"></code></pre>
+            </div>
+          </a-card>
+        </a-col>
+        <a-col :span="12">
+          <a-card title="02RG" :bordered="false" style="height :auto">
+            <div id="codeView" v-highlight>
+              <pre><code class="json"  v-html="RG02_code"></code></pre>
+            </div>
+          </a-card>
+        </a-col>
+      </a-row>
+    </div>
+  </a-spin>
 </template>
 
 <script>
@@ -62,6 +64,7 @@ export default {
   data() {
     return {
       code: "",
+      spinning: false,
       code2: "",
       code3: "",
       code4: "",
@@ -81,6 +84,7 @@ export default {
     }
   },
   mounted() {
+    this.spinning = true;
     const v_url = "http://172.29.162.145:5000/InterfaceServiceHub";
     //const v_url = "http://localhost:5000/InterfaceServiceHub"
     console.log("完成挂载,开始连接..." + v_url);
@@ -88,6 +92,7 @@ export default {
 
     bus.$on("ck01Data", data => {
       this.code = data;
+      this.spinning = false;
     });
 
     bus.$on("ck02Data", data => {
@@ -128,3 +133,11 @@ export default {
   methods: {}
 };
 </script>
+
+<style scoped>
+.spin-content {
+  border: 1px solid #91d5ff;
+  background-color: #e6f7ff;
+  padding: 30px;
+}
+</style>

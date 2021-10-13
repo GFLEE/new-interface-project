@@ -3,7 +3,7 @@
     <a-tab-pane key="1"  >
       <span slot="tab">
         <a-icon type="apple" />
-        Tab 1
+        后台系统
       </span>
    <router-view /> 
      </a-tab-pane> 

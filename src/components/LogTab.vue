@@ -1,10 +1,10 @@
 <template>
   <div>
-    <a-tabs default-active-key="1" @change="callback">
+    <a-tabs default-active-key="tab1" @change="callback">
       <a-tab-pane key="tab1" tab="日志列表">
-        Content of Tab Pane 1
+        <LogList></LogList>
       </a-tab-pane>
-      <a-tab-pane key="tab2" tab="Tab 2" force-render>
+      <a-tab-pane key="tab2" tab="日志图表" force-render>
         Content of Tab Pane 2
       </a-tab-pane>
       <a-tab-pane key="tab3" tab="Tab 3">
@@ -15,7 +15,11 @@
 </template>
 
 <script>
+import LogList from "./LogList/LogList";
+
 export default {
+  name: "LogTab",
+  components: { LogList },
   data() {
     return {};
   },
