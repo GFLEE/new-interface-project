@@ -34,6 +34,7 @@
 
 <script>
 export default {
+  name:"Task",
   data() {
     return {
       tabList: [

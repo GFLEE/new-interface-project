@@ -5,6 +5,7 @@ const productionGzipExtensions = ["js", "css"];
 const isProd = process.env.NODE_ENV === "production";
 const { getThemeColors, modifyVars } = require("./src/utils/themeUtil");
 const { resolveCss } = require("./src/utils/theme-color-replacer-extend");
+const CompressionWebpackPlugin = require('compression-webpack-plugin')
 
 /**
  * @type {import('@vue/cli-service').ProjectOptions}
@@ -48,6 +49,7 @@ module.exports = {
       // add `CompressionWebpack` plugin to webpack plugins
       config.plugins.push(
         new CompressionWebpackPlugin({
+          filename: "[path].gz[query]",
           algorithm: "gzip",
           test: new RegExp("\\.(" + productionGzipExtensions.join("|") + ")$"),
           threshold: 10240,
@@ -60,7 +62,7 @@ module.exports = {
     loaderOptions: {
       less: {
         lessOptions: {
-          modifyVars: modifyVars(),  //读取变量值
+          modifyVars: modifyVars(), //读取变量值
           javascriptEnabled: true
         }
       }

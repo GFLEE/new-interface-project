@@ -9,45 +9,58 @@
           <a-menu
             mode="inline"
             :default-selected-keys="['1']"
-            :default-open-keys="['sub1']"
+            :default-open-keys="['Setting']"
             style="height: 100%"
           >
             <a-sub-menu key="Setting">
               <span slot="title"><a-icon type="setting" />系统管理</span>
-              <a-menu-item key="MQView">
-                <router-link to="/MQView">
-                  <a-icon type="aliwangwang" />
-                  <span>RabbitMQ</span>
-                </router-link>
-              </a-menu-item>
-              <a-menu-item key="Redis">
-                <router-link to="/Redis">
-                  <a-icon type="cloud-server" />
-                  <span>Redis</span>
-                </router-link>
-              </a-menu-item>
-              <a-menu-item key="HelloWorld">
-                <router-link to="/HelloWorld">
-                  <a-icon type="android" />
-                  <span>HelloWorld</span>
+
+              <a-menu-item key="BoundQuery">
+                <router-link to="/dashboard/workplace/BoundQuery">
+                  <a-icon type="schedule" />
+                  <span>出/入库查询</span>
                 </router-link>
               </a-menu-item>
 
+              <a-menu-item key="Production">
+                <router-link to="/dashboard/workplace/Production">
+                  <a-icon type="schedule" />
+                  <span>产量查询</span>
+                </router-link>
+              </a-menu-item>
+
+              <a-menu-item key="BerthBoard">
+                <router-link to="/dashboard/workplace/BerthBoard">
+                  <a-icon type="schedule" />
+                  <span>备货位看板</span>
+                </router-link>
+              </a-menu-item>
               <a-menu-item key="SignalRTest">
                 <router-link to="/dashboard/workplace/SignalRTest">
                   <a-icon type="android" />
-
-                  <span>SignalR测试</span>
+                  <span>出库口看板</span>
                 </router-link>
               </a-menu-item>
 
+              <a-menu-item key="Stock">
+                <router-link to="/dashboard/workplace/Stock">
+                  <a-icon type="cloud-sync" />
+                  <span>库存查看</span>
+                </router-link>
+              </a-menu-item>
+              <a-menu-item key="ProductPlan">
+                <router-link to="/dashboard/workplace/ProductPlan">
+                  <a-icon type="snippets" />
+                  <span>生产计划单</span>
+                </router-link>
+              </a-menu-item>
               <a-menu-item key="LogTab">
                 <router-link to="/dashboard/workplace/LogTab">
                   <a-icon type="schedule" />
                   <span>日志查看</span>
                 </router-link>
               </a-menu-item>
-            </a-sub-menu> 
+            </a-sub-menu>
             <a-sub-menu key="sub3">
               <span slot="title"><a-icon type="tool" />系统工具</span>
               <a-menu-item key="EntityTool">
@@ -56,8 +69,11 @@
                   <span>实体工具</span>
                 </router-link>
               </a-menu-item>
-              <a-menu-item key="10">
-                option10
+              <a-menu-item key="ThreeJs">
+                <router-link to="/dashboard/workplace/ThreeJs">
+                  <a-icon type="snippets" />
+                  <span>ThreeJs</span>
+                </router-link>
               </a-menu-item>
               <a-menu-item key="11">
                 option11
