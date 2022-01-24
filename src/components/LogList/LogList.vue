@@ -99,7 +99,7 @@
             </span>
             <span slot="MESSAGE" slot-scope="MESSAGE">
               <h3>{{ MESSAGE }}</h3>
-            </span>
+            </span> 
             <p slot="tags" slot-scope="text, i, tags">
               <a-button
                 @click="rePush(text, i, tags)"
