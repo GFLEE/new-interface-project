@@ -81,7 +81,11 @@ export default {
       color: ""
     };
   },
-
+  beforeMount() {},
+  beforeUnmount() {
+    this.request_data = null;
+    this.response_data = null;
+  },
   mounted() {},
   watch: {
     message: {

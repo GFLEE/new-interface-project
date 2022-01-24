@@ -6,29 +6,54 @@
         <a-button icon="file-excel" :size="size" @click="exportExcel">
           导出
         </a-button>
-        <a-button icon="reload" :size="size" @click="reloadList">
+        <a-button icon="reload" :size="size" @click="refreshList">
           刷新
         </a-button>
         <a-input-search
-          placeholder="接口名称"
+          placeholder="内容"
           :size="size"
           @search="onSearch"
-          style="width: 145px"
+          style="width: 190px"
         />
         <a-select
           :size="size"
           default-value="All"
-          style="width: 100px"
+          style="width: 128px"
           @change="handleResultChange"
         >
           <a-select-option value="All">
-            ==全部==
+            ==全部状态==
           </a-select-option>
           <a-select-option value="Succeed">
             成功
           </a-select-option>
           <a-select-option value="Failed">
             失败
+          </a-select-option>
+        </a-select>
+        <a-select
+          :size="size"
+          default-value="All"
+          style="width: 128px"
+          @change="handleRetryingChange"
+        >
+          <a-select-option value="All">
+            ==全部次数==
+          </a-select-option>
+          <a-select-option value="1">
+            1
+          </a-select-option>
+          <a-select-option value="2">
+            2
+          </a-select-option>
+          <a-select-option value="3">
+            3
+          </a-select-option>
+          <a-select-option value="4">
+            4
+          </a-select-option>
+          <a-select-option value="bigger">
+            > 4
           </a-select-option>
         </a-select>
       </a-space>
@@ -50,10 +75,10 @@
             @change="handleTableChange"
           >
             <span slot="API" slot-scope="API">
-              <h1>{{ API }}</h1>
+              <h3>{{ API }}</h3>
             </span>
             <span slot="API_NAME" slot-scope="API_NAME">
-              <h1>{{ API_NAME }}</h1>
+              <h3>{{ API_NAME }}</h3>
             </span>
             <span slot="STATUS" slot-scope="STATUS">
               <a-tag
@@ -64,11 +89,26 @@
               </a-tag>
             </span>
             <span slot="RETRING" slot-scope="RETRING">
-              <h1>{{ RETRING }}</h1>
+              <h3>{{ RETRING }}</h3>
             </span>
             <span slot="CONSUMING" slot-scope="CONSUMING">
-              <h1>{{ CONSUMING }}毫秒</h1>
+              <h3>{{ CONSUMING }}毫秒</h3>
             </span>
+            <span slot="CREATE_DATE" slot-scope="CREATE_DATE">
+              <h3>{{ CREATE_DATE }}</h3>
+            </span>
+            <span slot="MESSAGE" slot-scope="MESSAGE">
+              <h3>{{ MESSAGE }}</h3>
+            </span>
+            <p slot="tags" slot-scope="text, i, tags">
+              <a-button
+                @click="rePush(text, i, tags)"
+                type="primary"
+                :disabled="i.API_TYPE === 'job' ? false : true"
+                size="small"
+                >{{ i.API_TYPE === "job" ? "重推" : "重调" }}</a-button
+              >
+            </p>
           </a-table>
         </a-col>
         <!--<a-col :span="10"> <LogInfo :message="log_id" /> </a-col>-->
@@ -79,6 +119,8 @@
 
 <script>
 import { LogQueryService } from "../../api/admin";
+import { RePushLogService } from "../../api/admin";
+
 import LogInfo from "./LogInfo";
 const queryData = params => {
   return LogQueryService(params);
@@ -89,7 +131,8 @@ const columns = [
     title: "时间",
     dataIndex: "CREATE_DATE",
     width: "auto",
-    ellipsis: true
+    ellipsis: true,
+    scopedSlots: { customRender: "CREATE_DATE" }
   },
   {
     title: "API",
@@ -106,13 +149,14 @@ const columns = [
   {
     title: "状态",
     dataIndex: "STATUS",
-    width: "20%",
+    width: "10%",
     scopedSlots: { customRender: "STATUS" }
   },
   {
     title: "信息",
     dataIndex: "MESSAGE",
-    width: "20%"
+    width: "20%",
+    scopedSlots: { customRender: "MESSAGE" }
   },
   {
     title: "次数",
@@ -125,6 +169,14 @@ const columns = [
     dataIndex: "CONSUMING",
     width: "8%",
     scopedSlots: { customRender: "CONSUMING" }
+  },
+  {
+    title: "操作",
+    dataIndex: "tags",
+    key: "tags",
+    width: "8%",
+
+    scopedSlots: { customRender: "tags" }
   }
 ];
 
@@ -143,11 +195,12 @@ export default {
       visible: false,
       pagination: {},
       size: "small",
-      page_size: 20,
+      page_size: 10,
       result: "",
       api: "",
       //rowClassName: "",
       loading: false,
+      times: "",
       columns
     };
   },
@@ -162,11 +215,24 @@ export default {
 
     onSearch(value) {
       this.api = value;
-      this.reloadList();
+      this.refresh({
+        page: 1,
+        pageSize: this.page_size
+      });
     },
     handleResultChange(value) {
       this.result = value;
-      this.reloadList();
+      this.refresh({
+        page: 1,
+        pageSize: this.page_size
+      });
+    },
+    handleRetryingChange(value) {
+      this.times = value;
+      this.refresh({
+        page: 1,
+        pageSize: this.page_size
+      });
     },
     handleTableChange(pagination) {
       const pager = { ...this.pagination };
@@ -174,11 +240,7 @@ export default {
       this.pagination = pager;
       this.fetch({
         page: pagination.current,
-        pageSize: pagination.pageSize
-        //sortField: sorter.field,
-        //sortOrder: sorter.order,
-        //...filters
-        //, filters, sorter
+        pageSize: pagination.pageSize 
       });
     },
     click(record) {
@@ -220,22 +282,43 @@ export default {
       queryData({
         result: this.result,
         api: this.api,
+        times: this.times,
         ...params
       }).then(data => {
         const pagination = { ...this.pagination };
-        // Read total count from server
-        // pagination.total = data.totalCount;
         pagination.total = data.count;
+        pagination.current = params.page;
         pagination.showTotal = (total, range) =>
           `显示${range[0]}到${range[1]}, 共${total}条记录`;
         this.loading = false;
         this.data = data.Logs;
         this.pagination = pagination;
-        this.log_id = this.data[0].T_ID;
+        if (this.data.count > 0) {
+          this.log_id = this.data[0].T_ID;
+        }
+      });
+    }, 
+    refresh(params = {}) {
+      this.fetch(params);
+    },
+    refreshList() {
+      this.refresh({
+        page:
+          this.pagination.current == undefined ? 1 : this.pagination.current,
+        pageSize: this.page_size
       });
     },
-    reloadList() {
-      this.fetch({ page: 1, pageSize: this.page_size });
+    rePush(text, i, tags) {
+      console.log("text", text);
+      console.log("i", i);
+      console.log("tags", tags);
+      this.loading = true;
+      RePushLogService(i.T_ID).then(data => {
+        //console.log(data);
+        this.loading = false;
+        this.$message.info(data.msg);
+        this.refreshList();
+      });
     },
     exportExcel() {}
   }

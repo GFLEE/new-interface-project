@@ -1,7 +1,31 @@
 <template>
   <div id="app">
-    <a-row>
-      <div id="main" style="width:auto;height:400px"></div>
+    <a-row :gutter="24">
+      <a-col class="gutter-row" :span="2">
+        <a-select
+          :size="size"
+          default-value="本周"
+          style="width: auto"
+          @change="handleIntervalChange"
+        >
+          <a-select-option value="week">
+            本周
+          </a-select-option>
+          <a-select-option value="10">
+            过去10天
+          </a-select-option>
+          <a-select-option value="month">
+            过去一个月
+          </a-select-option>
+          <a-select-option value="3month">
+            过去三个月
+          </a-select-option>
+        </a-select>
+      </a-col>
+
+      <a-col class="gutter-row" :span="22">
+        <div id="main" style="width:auto;height:400px"></div>
+      </a-col>
     </a-row>
     <a-row>
       <a-table
@@ -70,13 +94,11 @@ export default {
   data() {
     return {
       data: Object,
-      date_arr: [],
-      in_arr: [],
-      out_arr: [],
-      shel_arr: [],
       select_date: "",
       columns,
       loading: false,
+      interval: "week",
+      size: "small",
       table_data: []
     };
   },
@@ -87,6 +109,21 @@ export default {
     this.fetch({});
   },
   methods: {
+    fetch(params = {}) {
+      queryData({
+        method: "main",
+        offset: this.interval,
+        day: "",
+        ...params
+      }).then(data => {
+        this.data = data;
+        this.initDiagram();
+      });
+    },
+    handleIntervalChange(value) {
+      this.interval = value;
+      this.fetch({});
+    },
     initDiagram() {
       var myChart = this.$echarts.init(document.getElementById("main"));
       const labelOption = {
@@ -133,7 +170,7 @@ export default {
         },
         xAxis: {
           type: "category",
-          data: eval(this.date_arr),
+          data: eval(this.data.dates),
           axisTick: {
             alignWithLabel: true
           },
@@ -148,7 +185,7 @@ export default {
           {
             name: "入库量",
             type: "bar",
-            data: eval(this.in_arr),
+            data: eval(this.data.in_qty),
             emphasis: {
               focus: "series"
             },
@@ -170,12 +207,12 @@ export default {
             color: "#91CB74",
             //color: "#738EDD",
             smooth: true,
-            data: eval(this.in_arr)
+            data: eval(this.data.in_qty)
           },
           {
             name: "出库量",
             type: "bar",
-            data: eval(this.out_arr),
+            data: eval(this.data.out_qty),
             emphasis: {
               focus: "series"
             },
@@ -196,12 +233,12 @@ export default {
             //yAxisIndex: 1,
             smooth: true,
             color: "",
-            data: eval(this.out_arr)
+            data: eval(this.data.out_qty)
           },
           {
             name: "下架量",
             type: "bar",
-            data: eval(this.shel_arr),
+            data: eval(this.data.sheloff_qty),
             emphasis: {
               focus: "series"
             },
@@ -228,24 +265,6 @@ export default {
       }).then(data => {
         this.loading = false;
         this.table_data = data;
-      });
-    },
-    fetch(params = {}) {
-      queryData({
-        method: "main",
-        offset: 0,
-        day: "",
-        ...params
-      }).then(data => {
-        this.data = data;
-        for (var i in data.dates) {
-          this.date_arr.push(data.dates[i]);
-          this.in_arr.push(data.in_qty[i]);
-          this.out_arr.push(data.out_qty[i]);
-          this.shel_arr.push(data.sheloff_qty[i]);
-        }
-
-        this.initDiagram();
       });
     }
   }

@@ -85,7 +85,8 @@ export default {
   },
   mounted() {
     this.spinning = true;
-    const v_url = "http://172.29.162.145:5000/InterfaceServiceHub";
+    //const v_url = "http://10.1.11.36:5000/InterfaceServiceHub";
+    const v_url = "http://172.29.162.145:5000/InterfaceServiceHub"; 
     //const v_url = "http://localhost:5000/InterfaceServiceHub";
     console.log("完成挂载,开始连接..." + v_url);
     connectServer(v_url, "virtual data");

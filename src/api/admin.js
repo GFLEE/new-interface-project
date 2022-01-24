@@ -2,6 +2,7 @@ import request from "@/utils/request_old";
 // import scope from "./scope";
 // const apiPrefix = `${process.env.VUE_APP_BASE_API}/${scope}/`
 
+//const InterfaceServer = "http://10.1.11.36:5000/api/Interface/";
 const InterfaceServer = "http://172.29.162.145:5000/api/Interface/";
 //const InterfaceServer = "http://localhost:5000/api/Interface/";
 
@@ -44,9 +45,12 @@ export const QueryProductionService = params => {
   });
 };
 
-
 export const QueryBoundService = params => {
   return request.post(InterfaceServer + "QueryBound", {
     params: params
   });
+};
+
+export const RePushLogService = params => {
+  return request.post(InterfaceServer + "RePushLog", { t_id: params });
 };
